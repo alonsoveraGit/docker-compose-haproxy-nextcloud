@@ -1,0 +1,60 @@
+version: '2'
+
+volumes:
+  nextcloud:
+  nextcloud2:
+  db:
+
+services:
+  db:
+    image: mariadb:10.5
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=bolson
+      - MYSQL_PASSWORD=bolson
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+
+  app1:
+    image: nextcloud
+    restart: always
+    hostname: app1
+    container_name: app1
+    expose:
+      - 80
+    links:
+      - db
+    volumes:
+      - nextcloud:/var/www/html
+    environment:
+      - MYSQL_PASSWORD=bolson
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db
+  app2:
+    image: nextcloud
+    restart: always
+    hostname: app2
+    container_name: app2
+    expose:
+      - 80
+    links:
+      - db
+    volumes:
+      - nextcloud2:/var/www/html
+    environment:
+      - MYSQL_PASSWORD=bolson
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_HOST=db
+
+  haproxy:
+    build: ./haproxy/
+    ports:
+      - "8080:80"
+    depends_on:
+      - app1
+      - app2
