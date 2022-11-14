@@ -2,7 +2,6 @@ version: '2'
 
 volumes:
   nextcloud:
-  nextcloud2:
   db:
 
 services:
@@ -44,7 +43,7 @@ services:
     links:
       - db
     volumes:
-      - nextcloud2:/var/www/html
+      - nextcloud:/var/www/html
     environment:
       - MYSQL_PASSWORD=bolson
       - MYSQL_DATABASE=nextcloud
