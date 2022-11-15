@@ -54,6 +54,7 @@ services:
     build: ./haproxy/
     ports:
       - "8080:80"
+      - "8484:8484"
     depends_on:
       - app1
       - app2
